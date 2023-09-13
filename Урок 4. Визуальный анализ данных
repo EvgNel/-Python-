@@ -1,0 +1,194 @@
+Задача 1
+Постройте график
+Назовите график
+Сделайте именование оси x и оси y
+Сделайте выводы
+Задача 1.1
+Скачать данные по ссылке https://gbcdn.mrgcdn.ru/uploads/asset/4266730/attachment/08ec55854637add5247d22396d0f7456.csv
+
+[37]
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import scipy.stats as stats
+import numpy as np
+
+df = pd.read_csv('kc_house_data.csv', sep=',')
+df.info()
+
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 21613 entries, 0 to 21612
+Data columns (total 21 columns):
+ #   Column         Non-Null Count  Dtype  
+---  ------         --------------  -----  
+ 0   id             21613 non-null  int64  
+ 1   date           21613 non-null  object 
+ 2   price          21613 non-null  float64
+ 3   bedrooms       21613 non-null  int64  
+ 4   bathrooms      21613 non-null  float64
+ 5   sqft_living    21613 non-null  int64  
+ 6   sqft_lot       21613 non-null  int64  
+ 7   floors         21613 non-null  float64
+ 8   waterfront     21613 non-null  int64  
+ 9   view           21613 non-null  int64  
+ 10  condition      21613 non-null  int64  
+ 11  grade          21613 non-null  int64  
+ 12  sqft_above     21613 non-null  int64  
+ 13  sqft_basement  21613 non-null  int64  
+ 14  yr_built       21613 non-null  int64  
+ 15  yr_renovated   21613 non-null  int64  
+ 16  zipcode        21613 non-null  int64  
+ 17  lat            21613 non-null  float64
+ 18  long           21613 non-null  float64
+ 19  sqft_living15  21613 non-null  int64  
+ 20  sqft_lot15     21613 non-null  int64  
+dtypes: float64(5), int64(15), object(1)
+memory usage: 3.5+ MB
+
+[38]
+df
+
+Задача 1.2
+Изучите стоимости недвижимости
+[39]
+plt.figure(figsize=(6, 6))
+plt.hist(df['price'])
+plt.title('Распределение стоимости недвижимости')
+plt.xlabel('Стоимость')
+plt.ylabel('Количество');
+
+[40]
+sns.boxplot(x=df['price'])
+plt.title("Распределение стоимости")
+plt.xlabel("Стоимость");
+
+50 % домов расположено в ценовом диапазоне от 300 тыс. до 700 тыс., большая часть домов имеет стоимость до 1 млн.
+
+Задача 1.3
+Изучите распределение квадратуры жилой площади
+[41]
+plt.figure(figsize=(10, 4))
+plt.hist(df['sqft_living'],bins='auto',log=True)
+plt.title("Распределение жилой площади")
+plt.xlabel('Площадь')
+plt.ylabel('Количество');
+
+[42]
+sns.boxplot(x=df['sqft_living'])
+plt.title("Распределение жилой площади")
+plt.xlabel('Площадь');
+
+Средняя площадь домов около 2000 кв.м, половина домов имеет площадь от 1500 до 2500 кв.м., после 2000 кв.м наблюдается плавное снижение количества домов вплоть до 6000 кв.м.
+
+Задача 1.4
+Изучите распределение года постройки
+[43]
+plt.figure(figsize=(10, 6))
+sns.histplot(df['yr_built'])
+plt.ticklabel_format(style='plain')
+plt.title('Распределение года постройки')
+plt.xlabel('Год постройки')
+plt.ylabel('Количество');
+
+Из графика следуют, что строительство по годам распределено не равномерно, наблюдаются серьзные проседания в 30-х годах, в конце 70-х и 90-х, а так же в конце 00-х годов XXI века. При этом наблюдается серьёзный рост строительства в начале 00-х годов XXI века.
+
+Задача 2
+Построить график, сделать выводы
+Задача 2.1
+Изучите распределение домов от наличия вида на набережную
+[44]
+data = df['waterfront'].value_counts()
+labels = ['Без вида', 'С видом']
+colors = ['lightblue', 'green']
+plt.pie(data, labels=labels, colors=colors, autopct='%1.1f%%')
+plt.title('Наличие вида на набережную')
+Text(0.5, 1.0, 'Наличие вида на набережную')
+
+Согласно диограмме вид на набережную имеют только 0,8 % домов.
+
+Задача 2.2
+Изучите распределение этажей домов
+[45]
+plt.hist(df['floors'], bins='auto')
+plt.title('Распределение этажей домов')
+plt.xlabel('Этажи')
+plt.ylabel('Количество домов')
+Text(0, 0.5, 'Количество домов')
+
+Более 10 000 домов имеют 1 этаж, более 8 000 домов имеют 2 этажа, около 2 000 домов имеют 1.5 этажа, около 500 домов имеют 3 этажа, 2.5 и 3.5 этажей имеют менее 100 домов.
+
+Задача 2.3
+Изучите распределение состояния домов
+[46]
+data = df['condition'].value_counts()
+plt.figure(figsize=(7, 6))
+plt.pie(data, autopct='%1.1f%%')
+plt.title('Распределение состояния домов')
+plt.legend(data.index);
+
+64.9 % домов имеют состояние дома равное 3, 26.3 % домов имеют состояние дома равное 4, 7.9 % домов имеют состояние дома равное 5, 0.8 % домов имеют состояние дома равное 2, 0.1 % домов имеют состояние дома равное 1.
+
+Задача 3
+Исследуйте, какие характеристики недвижимости влияют на стоимость недвижимости, с применением не менее 5 диаграмм из урока.
+Анализ сделайте в формате storytelling: дополнить каждый график письменными выводами и наблюдениями.
+[47]
+corr_matrix = df.corr(numeric_only=True)
+corr_matrix = np.round(corr_matrix, 1)
+corr_matrix[np.abs(corr_matrix) < 0.3] = 0
+corr_matrix
+
+[48]
+plt.figure(figsize=(11, 6))
+sns.heatmap(corr_matrix, annot=True, linewidths=.5, cmap='coolwarm')
+plt.title('Корреляция');
+
+Умерреная корреляционная связь наблюдается между:
+
+ценой и количеством спален
+ценой и количеством ванных
+ценой и колличеством этажей
+ценой и наличием набережной
+ценой и видом
+ценой и кв. метрами дома, которые находятся ниже земли
+ценой и широтой
+Высокая корреляционная связь между:
+
+ценой и кв. метрами жилья
+ценой и уровнем конструкции и дизайна
+ценой и кв. метрами дома, которые находятся выше земли
+ценой и кв. метрами жилой площади у 15 соседей
+[49]
+df = df.sort_values(by='bedrooms')
+sns.boxplot(x=df['price'], y=df['bedrooms'].astype('str'), whis=1.5);
+plt.xlabel('Стоимость')
+plt.ylabel('Количество спальных')
+plt.title('Влияние количества спальных на стоимость домов')
+Text(0.5, 1.0, 'Влияние количества спальных на стоимость домов')
+
+Наблюдается зависимость стоимости дома от количества спальных, чем больше тем дороже.
+
+[50]
+df = df.sort_values(by='grade')
+sns.boxplot(x=df['price'], y=df['grade'].astype('str'), whis=1.5);
+plt.xlabel('Стоимость')
+plt.ylabel('Уровень конструкции и дизайна')
+plt.title('Влияние уровня конструкции и дизайна на стоимость домов')
+Text(0.5, 1.0, 'Влияние уровня конструкции и дизайна на стоимость домов')
+
+Аналогично со спальными, наблюдается прямая зависимость стоимости дома от уровня конструкции и дизайна.
+
+[51]
+sns.jointplot(x=df['price'], y=df['sqft_living'], kind='reg')
+plt.xlabel('Стоимость')
+plt.ylabel('Площадь');
+
+
+Чем дом больше по площади, тем он дороже.
+
+[52]
+sns.boxplot(x=df['price'], y=df['floors'].astype('str'), whis=1.5);
+plt.xlabel('Стоимость')
+plt.ylabel('Этажность')
+plt.title('Влияние количества этажей на стоимость');
+
+Самая высокая средняя стоимость у домов имеющих 2.5 этажа, а самая низкая у 1.0 этажных
